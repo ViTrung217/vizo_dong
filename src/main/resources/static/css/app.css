@@ -1,0 +1,143 @@
+:root {
+    --vz-celestia-50: #f0fbff;
+    --vz-celestia-100: #e3f8ff;
+    --vz-celestia-200: #c9efff;
+    --vz-celestia-300: #a9e4ff;
+    --vz-celestia-400: #7fd6fb;
+    --vz-celestia-500: #53c2ee;
+    --vz-celestia-600: #2eaad8;
+    --vz-celestia-700: #1f89b1;
+    --vz-celestia-800: #186e8f;
+    --vz-celestia-900: #12546e;
+
+    --vz-text-main: #15384f;
+    --vz-text-muted: #456b82;
+    --vz-link: #1f89b1;
+    --vz-link-hover: #186e8f;
+}
+
+/* Global base: trang nào cũng ăn style */
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    color: var(--vz-text-main);
+    background: linear-gradient(
+        135deg,
+        var(--vz-celestia-200),
+        var(--vz-celestia-100) 45%,
+        var(--vz-celestia-50)
+    );
+    font-weight: 500; /* tăng đậm nhẹ toàn cục */
+    line-height: 1.55;
+}
+
+/* Heading đậm hơn 1 nấc để rõ ràng */
+h1, h2, h3, h4, h5, h6,
+.fw-bold {
+    font-weight: 700 !important;
+}
+
+/* Màu chữ phụ vẫn đủ tương phản */
+.text-secondary,
+.text-muted {
+    color: var(--vz-text-muted) !important;
+}
+
+/* Link đồng bộ celestia */
+a {
+    color: var(--vz-link);
+    font-weight: 600;
+}
+a:hover {
+    color: var(--vz-link-hover);
+}
+
+/* Các lớp cũ vẫn giữ để không vỡ giao diện hiện tại */
+.auth-page {
+    background: linear-gradient(
+        135deg,
+        var(--vz-celestia-200),
+        var(--vz-celestia-100) 45%,
+        var(--vz-celestia-50)
+    );
+}
+
+.home-page {
+    background: radial-gradient(
+        circle at top left,
+        var(--vz-celestia-300),
+        var(--vz-celestia-100) 40%,
+        var(--vz-celestia-50)
+    );
+}
+
+.auth-wrap {
+    min-height: 100vh;
+}
+
+.auth-card,
+.home-card,
+.card {
+    border: 1px solid rgba(31, 137, 177, 0.14);
+    border-radius: 16px;
+    box-shadow: 0 16px 36px rgba(24, 110, 143, 0.14);
+    color: var(--vz-text-main);
+}
+
+/* Marker dùng ở trang auth/home hiện tại */
+.brand-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--vz-celestia-600);
+    border-radius: 999px;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.title-mark {
+    display: inline-block;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--vz-celestia-600), var(--vz-celestia-400));
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+/* Đồng bộ form */
+.form-label {
+    color: var(--vz-text-main);
+    font-weight: 600;
+}
+
+.form-control {
+    border-color: #b7dff0;
+    color: var(--vz-text-main);
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: var(--vz-celestia-500);
+    box-shadow: 0 0 0 0.2rem rgba(83, 194, 238, 0.22);
+}
+
+/* Đồng bộ button bootstrap theo celestia */
+.btn-primary {
+    background-color: var(--vz-celestia-700);
+    border-color: var(--vz-celestia-700);
+    font-weight: 600;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--vz-celestia-800);
+    border-color: var(--vz-celestia-800);
+}
+
+.btn-outline-danger {
+    border-width: 2px;
+}
