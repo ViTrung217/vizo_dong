@@ -1,7 +1,8 @@
 package com.vitrung.vizo_dong.service;
 
-import com.vitrung.vizo_dong.model.Transaction;
-import com.vitrung.vizo_dong.model.User;
+import com.vitrung.vizo_dong.dto.TransferRequestDto;
+import com.vitrung.vizo_dong.entity.Transaction;
+import com.vitrung.vizo_dong.entity.User;
 import com.vitrung.vizo_dong.repository.TransactionRepository;
 import com.vitrung.vizo_dong.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,19 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public String processTransfer(String senderUsername, String receiverUsername, Long amount, String message) throws Exception {
-        String normalizedMessage = (message == null || message.isBlank()) ? "Chuyển tiền" : message.trim();
-        transferVizoDong(senderUsername, receiverUsername, amount, normalizedMessage, "TRANSFER");
-        return "Chuyển thành công " + amount + " Vizo Đồng cho " + receiverUsername;
+    public String processTransfer(String senderUsername, TransferRequestDto transferRequest) throws Exception {
+        String normalizedMessage = (transferRequest.getMessage() == null || transferRequest.getMessage().isBlank())
+                ? "Chuyển tiền"
+                : transferRequest.getMessage().trim();
+
+        transferVizoDong(
+                senderUsername,
+                transferRequest.getReceiver(),
+                transferRequest.getAmount(),
+                normalizedMessage,
+                "TRANSFER"
+        );
+        return "Chuyển thành công " + transferRequest.getAmount() + " Vizo Đồng cho " + transferRequest.getReceiver();
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ) 

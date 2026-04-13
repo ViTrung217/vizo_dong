@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import com.vitrung.vizo_dong.model.User;
+import com.vitrung.vizo_dong.entity.User;
 
 
 @Service

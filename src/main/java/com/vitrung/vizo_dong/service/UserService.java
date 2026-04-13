@@ -1,11 +1,13 @@
 package com.vitrung.vizo_dong.service;
 
+import com.vitrung.vizo_dong.dto.RegisterRequestDto;
+import com.vitrung.vizo_dong.dto.TopupRequestDto;
+import com.vitrung.vizo_dong.entity.User;
 import com.vitrung.vizo_dong.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.vitrung.vizo_dong.model.User;
 
 @Service
 public class UserService {
@@ -15,18 +17,18 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void register(String username, String email, String rawPassword) throws Exception {
-        if(userRepository.existsByUsername(username)) {
+    public void register(RegisterRequestDto registerRequest) throws Exception {
+        if(userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new Exception("Nguoi dung da ton tai");
         }
-        if(userRepository.existsByEmail(email)){
+        if(userRepository.existsByEmail(registerRequest.getEmail())){
             throw new Exception("email da ton tai");
         }
 
         User newUser = new User();
-        newUser.setUsername(username);
-        newUser.setEmail(email);
-        newUser.setPassword(passwordEncoder.encode(rawPassword));
+        newUser.setUsername(registerRequest.getUsername());
+        newUser.setEmail(registerRequest.getEmail());
+        newUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         newUser.setBalance(0L);
 
         userRepository.save(newUser);
@@ -37,7 +39,9 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
-    public boolean topupBalance(String username, Long amount) {
+    public boolean topupBalance(TopupRequestDto topupRequest) {
+        String username = topupRequest.getUsername();
+        Long amount = topupRequest.getAmount();
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("So tien nap phai lon hon 0");
         }
