@@ -46,7 +46,7 @@ public class TransferController {
         try {
             String successMessage = transactionService.processTransfer(sender, receiver, amount, message);
             redirectAttributes.addFlashAttribute("success", successMessage);
-            return "redirect:/history"; // Chuyển sang trang lịch sử (Tuần sau)
+            return "redirect:/history"; 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
             return "redirect:/transfer";
