@@ -14,6 +14,7 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     public void register(String username, String email, String rawPassword) throws Exception {
         if(userRepository.existsByUsername(username)) {
             throw new Exception("Nguoi dung da ton tai");
@@ -29,5 +30,17 @@ public class UserService {
         newUser.setBalance(0L);
 
         userRepository.save(newUser);
+    }
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+    public boolean topupBalance(String username, Long amount) {
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("So tien nap phai lon hon 0");
+        }
+        return userRepository.addBalance(username, amount) > 0;
     }
 }

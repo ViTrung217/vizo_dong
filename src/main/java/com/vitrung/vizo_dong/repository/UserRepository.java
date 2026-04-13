@@ -1,6 +1,9 @@
 package com.vitrung.vizo_dong.repository;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+
 import com.vitrung.vizo_dong.model.User;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,16 +19,16 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
-
-    // cộng tiền
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.balance = u.balance + :amount WHERE u.username = :username")
     int addBalance(@Param("username") String username, @Param("amount") Long amount);
-
-    // trừ tiền
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.balance = u.balance - :amount WHERE u.username = :username AND u.balance >= :amount")
     int deductBalance(@Param("username") String username, @Param("amount") Long amount);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    Optional<User> findByUsernameWithLock(@Param("username") String username);
 }
