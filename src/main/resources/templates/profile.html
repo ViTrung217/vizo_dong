@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Vizo Đồng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="home-page">
+<nav class="navbar navbar-expand-lg vz-topbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home">🟣 Vizo Đồng</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#vzNavbarProfile">
+            <span class="text-white">☰</span>
+        </button>
+        <div class="collapse navbar-collapse" id="vzNavbarProfile">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="/home">Explorer</a></li>
+                <li class="nav-item"><a class="nav-link" href="/campaigns">Campaigns</a></li>
+                <li class="nav-item"><a class="nav-link" href="/history">Transactions</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle vz-user-menu" href="#" role="button" data-bs-toggle="dropdown">
+                        <span>👤</span>
+                        <span sec:authentication="name">user</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile">Account Overview</a></li>
+                        <li><a class="dropdown-item" href="/campaigns">My Campaigns</a></li>
+                        <li><a class="dropdown-item" href="/transfer">Transfer Funds</a></li>
+                        <li><a class="dropdown-item" href="/admin" sec:authorize="hasRole('ADMIN')">Admin Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">👤 Profile của bạn</h3>
+            <a href="/home" class="btn btn-secondary">← Về trang chủ</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Username</p>
+                        <h5 th:text="${currentUser.username}">user</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Số dư</p>
+                        <h5 th:text="${#numbers.formatDecimal(currentUser.balance, 0, 'COMMA', 0, 'POINT')} + ' VĐ'">0</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                    <div class="card-body">
+                        <p class="text-muted mb-1">Vai trò</p>
+                        <h5 th:text="${currentUser.role}">USER</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="mb-3">Chỉnh sửa profile</h5>
+        <form th:action="@{/profile}" method="post" th:object="${profileUpdate}" class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Email</label>
+                <input type="email" th:field="*{email}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Mật khẩu mới (tùy chọn)</label>
+                <input type="password" th:field="*{newPassword}" class="form-control" placeholder="Để trống nếu không đổi">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Xác nhận mật khẩu mới</label>
+                <input type="password" th:field="*{confirmPassword}" class="form-control">
+            </div>
+            <div class="col-12 d-grid d-md-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/theme-toggle.js}" src="/js/theme-toggle.js"></script>
+<script th:src="@{/js/flash-auto-hide.js}" src="/js/flash-auto-hide.js"></script>
+</body>
+</html>

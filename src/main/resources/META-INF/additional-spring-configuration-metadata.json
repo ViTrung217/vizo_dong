@@ -1,0 +1,29 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "JWT signing secret key."
+    },
+    {
+      "name": "app.jwt.access-expiration-ms",
+      "type": "java.lang.Long",
+      "description": "Access token expiration time in milliseconds."
+    },
+    {
+      "name": "app.jwt.refresh-expiration-ms",
+      "type": "java.lang.Long",
+      "description": "Refresh token expiration time in milliseconds."
+    },
+    {
+      "name": "app.mail.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable mail sending feature."
+    },
+    {
+      "name": "app.mail.from",
+      "type": "java.lang.String",
+      "description": "Default sender email address for outgoing mails."
+    }
+  ]
+}

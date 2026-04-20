@@ -2,45 +2,39 @@ package com.vitrung.vizo_dong.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "campaigns")
 @Getter
 @Setter
-@Entity
-@Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
+public class Campaign {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    @Column(unique = true, nullable = false)
-    private String username;
-
-    @Column(unique = true, nullable = false)
-    private String email;
+    private Long id;
 
     @Column(nullable = false)
-    private String password;
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private UserRole role = UserRole.USER;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    private Long balance = 0L;
+    @Column(nullable = false)
+    private Long goalAmount;
+
+    @Column(nullable = false)
+    private Long currentAmount = 0L;
+
+    @Column(nullable = false)
+    private String createdBy;
 
     private LocalDateTime createdAt;
 

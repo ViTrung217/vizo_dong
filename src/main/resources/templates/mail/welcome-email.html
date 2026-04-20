@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{mail.welcome.subject(${username})}">Welcome</title>
+</head>
+<body style="font-family: Arial, sans-serif; color: #1f2937; line-height: 1.5;">
+<div style="max-width: 640px; margin: 24px auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 24px;">
+    <h2 style="margin-top: 0; color: #0d6efd;">
+        <span th:text="#{mail.welcome.greeting}">Xin chào</span>,
+        <span th:text="${username}">user</span>!
+    </h2>
+
+    <p th:text="#{mail.welcome.intro}">Cảm ơn bạn đã đăng ký tài khoản Vizo Đồng.</p>
+    <p th:text="#{mail.welcome.account(${email})}">Tài khoản của bạn: demo@gmail.com</p>
+    <p th:text="#{mail.welcome.ready}">Bạn đã sẵn sàng để trải nghiệm chuyển tiền và quyên góp chiến dịch.</p>
+
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 20px 0;">
+
+    <p style="font-size: 13px; color: #6b7280;" th:text="#{mail.welcome.footer}">
+        Nếu bạn không thực hiện đăng ký này, vui lòng bỏ qua email này.
+    </p>
+    <p style="margin-bottom: 0; font-weight: 600;" th:text="#{mail.welcome.signature}">Đội ngũ Vizo Đồng</p>
+</div>
+</body>
+</html>

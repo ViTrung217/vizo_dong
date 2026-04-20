@@ -1,6 +1,8 @@
 package com.vitrung.vizo_dong.repository;
 import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 
@@ -14,11 +16,17 @@ import java.util.Optional;
 @Repository
 
 public interface UserRepository extends JpaRepository<User, Long> {
+    
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
 
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
+
+    Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String usernameKeyword,
+                                                                              String emailKeyword,
+                                                                              Pageable pageable);
+
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.balance = u.balance + :amount WHERE u.username = :username")

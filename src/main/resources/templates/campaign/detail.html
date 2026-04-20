@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Campaign - Vizo Đồng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="home-page">
+<nav class="navbar navbar-expand-lg vz-topbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home">🟣 Vizo Đồng</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#vzNavbarCampaignDetail">
+            <span class="text-white">☰</span>
+        </button>
+        <div class="collapse navbar-collapse" id="vzNavbarCampaignDetail">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="/home">Explorer</a></li>
+                <li class="nav-item"><a class="nav-link" href="/campaigns">Campaigns</a></li>
+                <li class="nav-item"><a class="nav-link" href="/history">Transactions</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle vz-user-menu" href="#" role="button" data-bs-toggle="dropdown">
+                        <span>👤</span>
+                        <span sec:authentication="name">user</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile">Account Overview</a></li>
+                        <li><a class="dropdown-item" href="/campaigns">My Campaigns</a></li>
+                        <li><a class="dropdown-item" href="/transfer">Transfer Funds</a></li>
+                        <li><a class="dropdown-item" href="/admin" sec:authorize="hasRole('ADMIN')">Admin Dashboard</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="card p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0" th:text="${campaign.name}">Campaign</h3>
+            <a href="/campaigns" class="btn btn-secondary">← Danh sách campaign</a>
+        </div>
+
+        <p class="text-muted" th:text="${campaign.description}">Description</p>
+        <div class="progress mb-2" style="height: 12px;">
+            <div class="progress-bar" role="progressbar"
+                 th:style="|width: ${campaign.goalAmount > 0 ? (campaign.currentAmount * 100 / campaign.goalAmount) : 0}%|">
+            </div>
+        </div>
+        <p class="mb-0">
+            <strong th:text="${#numbers.formatDecimal(campaign.currentAmount, 0, 'COMMA', 0, 'POINT')} + ' VĐ'">0</strong>
+            /
+            <span th:text="${#numbers.formatDecimal(campaign.goalAmount, 0, 'COMMA', 0, 'POINT')} + ' VĐ'">0</span>
+        </p>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3">Quyên góp cho campaign</h5>
+        <form th:action="@{/campaigns/{id}/donate(id=${campaign.id})}" method="post" th:object="${donateRequest}" class="row g-2 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label">Số tiền (VĐ)</label>
+                <input type="number" th:field="*{amount}" min="1000" step="1000" class="form-control" required>
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn btn-primary">Quyên góp</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card p-4">
+        <h5 class="mb-3">Lịch sử quyên góp</h5>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle mb-0">
+                <thead>
+                <tr>
+                    <th>Người đóng góp</th>
+                    <th class="text-end">Số tiền</th>
+                    <th>Thời gian</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${historyPage.content}">
+                    <td th:text="${d.donorUsername}">user</td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(d.amount, 0, 'COMMA', 0, 'POINT')} + ' VĐ'">0</td>
+                    <td th:text="${#temporals.format(d.createdAt, 'dd/MM/yyyy HH:mm')}">14/04/2026 11:00</td>
+                </tr>
+                <tr th:if="${historyPage.content.isEmpty()}">
+                    <td colspan="3" class="text-center text-muted">Chưa có lượt quyên góp nào.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav class="mt-3" th:if="${historyPage.totalPages > 1}">
+            <ul class="pagination justify-content-end mb-0">
+                <li class="page-item" th:classappend="${historyPage.first} ? 'disabled'">
+                    <a class="page-link" th:href="@{/campaigns/{id}(id=${campaign.id}, page=${historyPage.number - 1}, size=${size})}">«</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, historyPage.totalPages - 1)}"
+                    th:classappend="${i == historyPage.number} ? 'active'">
+                    <a class="page-link" th:text="${i + 1}" th:href="@{/campaigns/{id}(id=${campaign.id}, page=${i}, size=${size})}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${historyPage.last} ? 'disabled'">
+                    <a class="page-link" th:href="@{/campaigns/{id}(id=${campaign.id}, page=${historyPage.number + 1}, size=${size})}">»</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/theme-toggle.js}" src="/js/theme-toggle.js"></script>
+<script th:src="@{/js/flash-auto-hide.js}" src="/js/flash-auto-hide.js"></script>
+</body>
+</html>

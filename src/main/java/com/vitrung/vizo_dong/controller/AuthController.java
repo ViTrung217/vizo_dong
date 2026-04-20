@@ -2,6 +2,8 @@ package com.vitrung.vizo_dong.controller;
 
 import com.vitrung.vizo_dong.dto.RegisterRequestDto;
 import com.vitrung.vizo_dong.entity.User;
+import com.vitrung.vizo_dong.entity.UserRole;
+import com.vitrung.vizo_dong.service.CampaignService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,9 @@ import java.security.Principal;
 public class AuthController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CampaignService campaignService;
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -50,8 +55,12 @@ public class AuthController {
         String username = principal.getName();
 
         User user = userService.getUserByUsername(username);
+        if (user.getRole() == UserRole.ADMIN) {
+            return "redirect:/admin";
+        }
         model.addAttribute("username", user.getUsername());
         model.addAttribute("balance", user.getBalance());
+        model.addAttribute("recentCampaigns", campaignService.getRecentCampaigns(6));
         return "home";
     }
 }
