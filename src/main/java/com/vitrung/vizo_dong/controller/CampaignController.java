@@ -30,6 +30,12 @@ public class CampaignController {
         return "campaign/list";
     }
 
+    @GetMapping("/campaigns/new")
+    public String showCreateCampaignForm(Model model) {
+        model.addAttribute("campaignCreate", new CampaignCreateRequestDto());
+        return "campaign/create";
+    }
+
     @GetMapping("/campaigns/{id}")
     public String showCampaignDetail(@PathVariable Long id,
                                      @RequestParam(defaultValue = "0") int page,
@@ -57,22 +63,28 @@ public class CampaignController {
     }
 
     @GetMapping("/admin/campaigns/new")
-    public String showCreateCampaignForm(Model model) {
-        model.addAttribute("campaignCreate", new CampaignCreateRequestDto());
-        return "admin/campaign-create";
+    public String showCreateCampaignFormForAdmin() {
+        return "redirect:/campaigns/new";
     }
 
-    @PostMapping("/admin/campaigns")
+    @PostMapping("/campaigns")
     public String createCampaign(@ModelAttribute CampaignCreateRequestDto campaignCreate,
                                  Principal principal,
                                  RedirectAttributes redirectAttributes) {
         try {
             campaignService.createCampaign(principal.getName(), campaignCreate);
             redirectAttributes.addFlashAttribute("success", "Tạo campaign thành công");
-            return "redirect:/admin";
+            return "redirect:/campaigns";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/admin/campaigns/new";
+            return "redirect:/campaigns/new";
         }
+    }
+
+    @PostMapping("/admin/campaigns")
+    public String createCampaignForAdmin(@ModelAttribute CampaignCreateRequestDto campaignCreate,
+                                         Principal principal,
+                                         RedirectAttributes redirectAttributes) {
+        return createCampaign(campaignCreate, principal, redirectAttributes);
     }
 }

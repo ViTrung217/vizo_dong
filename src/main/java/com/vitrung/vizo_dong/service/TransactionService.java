@@ -126,7 +126,7 @@ public class TransactionService {
             throw new Exception("Không thể tặng cà phê cho chính mình");
         }
 
-        transferVizoDong(senderUsername, receiverUsername, 1000L, "Tặng cà phê", "GIVE_COFFEE");
+        transferVizoDong(senderUsername, receiverUsername, 10000L, "Tặng cà phê", "GIVE_COFFEE");
     }
 
     public Long getUserBalance(String username){
