@@ -51,7 +51,8 @@ public class AuthApiController {
         if (registerRequestDto.getEmail() == null || registerRequestDto.getEmail().trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Email không được để trống"));
         }
-        if (registerRequestDto.getPassword() == null || !registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
+        if (registerRequestDto.getPassword() == null
+                || !registerRequestDto.getPassword().equals(registerRequestDto.getConfirmPassword())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Mật khẩu xác nhận không khớp"));
         }
         try {
@@ -68,17 +69,13 @@ public class AuthApiController {
                 || request.getPassword() == null || request.getPassword().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username/password không được để trống"));
         }
-
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
-
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String accessToken = jwtService.generateAccessToken(userDetails);
             String refreshTokenRaw = jwtService.generateRefreshToken(userDetails.getUsername());
             refreshTokenService.createOrRotate(userDetails.getUsername(), refreshTokenRaw);
-
             return ResponseEntity.ok(new AuthResponseDto("Bearer", accessToken, refreshTokenRaw));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

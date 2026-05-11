@@ -25,4 +25,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t")
     Long sumAllTransactedAmount();
+
 }

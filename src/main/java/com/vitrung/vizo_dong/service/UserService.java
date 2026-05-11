@@ -1,6 +1,7 @@
 package com.vitrung.vizo_dong.service;
 
 import com.vitrung.vizo_dong.dto.RegisterRequestDto;
+import com.vitrung.vizo_dong.dto.AdminUserUpdateRequestDto;
 import com.vitrung.vizo_dong.dto.ProfileUpdateRequestDto;
 import com.vitrung.vizo_dong.dto.TopupRequestDto;
 import com.vitrung.vizo_dong.event.UserRegisteredEvent;
@@ -76,6 +77,11 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
+    public User getUserById(Long userId) throws Exception {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("Người dùng không tồn tại"));
+    }
+
     public boolean topupBalance(TopupRequestDto topupRequest) {
         String username = topupRequest.getUsername();
         Long amount = topupRequest.getAmount();
@@ -147,6 +153,38 @@ public class UserService {
         }
 
         user.setRole(role);
+        userRepository.save(user);
+    }
+
+    public void updateUserByAdmin(Long userId, AdminUserUpdateRequestDto request, String currentAdminUsername) throws Exception {
+        User user = getUserById(userId);
+
+        String newEmail = request.getEmail() == null ? "" : request.getEmail().trim();
+        if (newEmail.isEmpty()) {
+            throw new Exception("Email không được để trống");
+        }
+        userRepository.findByEmail(newEmail).ifPresent(existing -> {
+            if (existing.getId() != user.getId()) {
+                throw new IllegalArgumentException("Email đã tồn tại");
+            }
+        });
+
+        UserRole newRole = request.getRole() == null ? user.getRole() : request.getRole();
+        if (user.getUsername().equalsIgnoreCase(currentAdminUsername) && newRole != UserRole.ADMIN) {
+            throw new Exception("Không thể tự hạ quyền tài khoản admin đang đăng nhập");
+        }
+
+        String newPassword = request.getNewPassword() == null ? "" : request.getNewPassword().trim();
+        String confirmPassword = request.getConfirmPassword() == null ? "" : request.getConfirmPassword().trim();
+        if (!newPassword.isEmpty()) {
+            if (!newPassword.equals(confirmPassword)) {
+                throw new Exception("Mật khẩu xác nhận không khớp");
+            }
+            user.setPassword(passwordEncoder.encode(newPassword));
+        }
+
+        user.setEmail(newEmail);
+        user.setRole(newRole);
         userRepository.save(user);
     }
 

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết người dùng - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="home-page">
+<nav class="navbar navbar-expand-lg vz-topbar sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/admin">🛠️ Vizo Đồng Admin</a>
+        <div class="ms-auto">
+            <a class="btn btn-outline-light btn-sm" href="/admin">← Về dashboard</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4 py-md-5">
+    <div class="card p-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div>
+                <h2 class="mb-1">👤 Chi tiết người dùng</h2>
+                <p class="text-muted mb-0">Quản lý thông tin, nạp tiền và xoá ngay trên một màn hình</p>
+            </div>
+            <a href="/admin" class="btn btn-secondary">← Quay lại</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 bg-light h-100"><div class="card-body"><p class="text-muted mb-1">ID</p><h5 th:text="${user.id}">1</h5></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-light h-100"><div class="card-body"><p class="text-muted mb-1">Username</p><h5 th:text="${user.username}">user</h5></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-light h-100"><div class="card-body"><p class="text-muted mb-1">Email</p><h5 th:text="${user.email}">email@example.com</h5></div></div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 bg-light h-100"><div class="card-body"><p class="text-muted mb-1">Số dư</p><h5 th:text="${#numbers.formatDecimal(user.balance, 0, 'COMMA', 0, 'POINT')} + ' VĐ'">0</h5></div></div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Cập nhật thông tin</h5>
+                        <form th:action="@{/admin/users/{id}/update(id=${user.id})}" method="post" th:object="${userUpdate}" class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Email</label>
+                                <input type="email" th:field="*{email}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Role</label>
+                                <select th:field="*{role}" class="form-select">
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">USER</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Mật khẩu mới (tùy chọn)</label>
+                                <input type="password" th:field="*{newPassword}" class="form-control" placeholder="Để trống nếu không đổi">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Xác nhận mật khẩu mới</label>
+                                <input type="password" th:field="*{confirmPassword}" class="form-control">
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 text-danger">Xoá người dùng</h5>
+                        <form th:action="@{/admin/users/{id}/delete(id=${user.id})}" method="post"
+                              onsubmit="return confirm('Xóa người dùng này? Hành động này không thể hoàn tác.');">
+                            <button type="submit" class="btn btn-outline-danger w-100">Xóa tài khoản</button>
+                        </form>
+                        <small class="text-muted d-block mt-3">Chỉ admin mới được thao tác ở màn này.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 text-muted">
+            <small>Ngày tạo: <span th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span></small>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/theme-toggle.js}" src="/js/theme-toggle.js"></script>
+<script th:src="@{/js/flash-auto-hide.js}" src="/js/flash-auto-hide.js"></script>
+</body>
+</html>

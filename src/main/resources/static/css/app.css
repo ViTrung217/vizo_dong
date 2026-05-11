@@ -14,6 +14,12 @@
     --vz-text-muted: #456b82;
     --vz-link: #1f89b1;
     --vz-link-hover: #186e8f;
+
+    --vz-campaign-accent: #7c5cff;
+    --vz-campaign-accent-2: #9b6bff;
+    --vz-campaign-bg: #0f2230;
+    --vz-campaign-card: #13283a;
+    --vz-campaign-border: rgba(145, 170, 255, 0.18);
 }
 
 /* Global base: trang nào cũng ăn style */
@@ -339,4 +345,94 @@ html[data-theme="dark"] .home-action-card {
 html[data-theme="dark"] .home-balance-card {
     background: linear-gradient(135deg, #1a5f7a, #2eaad8);
     color: #eaf7ff !important;
+}
+
+/* ===== Campaign admin section ===== */
+.campaign-admin {
+    border: 1px solid rgba(124, 92, 255, 0.18);
+    background: radial-gradient(circle at top left, rgba(124, 92, 255, 0.08), transparent 55%);
+}
+
+.campaign-admin .campaign-title {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+.campaign-admin .campaign-subtitle {
+    color: var(--vz-text-muted);
+}
+
+.campaign-admin .btn-campaign-create {
+    background: linear-gradient(135deg, var(--vz-campaign-accent), var(--vz-campaign-accent-2));
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 12px 24px rgba(124, 92, 255, 0.28);
+}
+
+.campaign-stats .stat-card {
+    background: rgba(19, 40, 58, 0.92);
+    border: 1px solid var(--vz-campaign-border);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.campaign-stats .stat-card h3 {
+    color: #eaf2ff;
+}
+
+.campaign-card {
+    border: 1px solid var(--vz-campaign-border);
+    background: var(--vz-campaign-card);
+    border-radius: 18px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.campaign-card .badge {
+    border-radius: 999px;
+    font-weight: 600;
+    padding: 6px 10px;
+}
+
+.campaign-card .badge-soft {
+    background: rgba(124, 92, 255, 0.18);
+    color: #d9ccff;
+}
+
+.campaign-card .badge-neutral {
+    background: rgba(255, 255, 255, 0.08);
+    color: #c7d6e0;
+}
+
+.campaign-card .progress {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
+.campaign-card .progress-bar {
+    background: linear-gradient(90deg, var(--vz-campaign-accent), #56d3ff);
+    border-radius: 999px;
+}
+
+.campaign-card .campaign-meta {
+    color: var(--vz-text-muted);
+    font-size: 0.85rem;
+}
+
+.campaign-actions .btn {
+    border-radius: 999px;
+    padding: 6px 16px;
+}
+
+.campaign-card .form-control,
+.campaign-card .form-select {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(124, 92, 255, 0.25);
+    color: #e5f3ff;
+}
+
+.campaign-card .form-control:focus,
+.campaign-card .form-select:focus {
+    border-color: var(--vz-campaign-accent);
+    box-shadow: 0 0 0 0.2rem rgba(124, 92, 255, 0.24);
 }

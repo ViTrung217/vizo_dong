@@ -1,11 +1,12 @@
 package com.vitrung.vizo_dong.controller;
 
+import com.vitrung.vizo_dong.dto.AdminUserUpdateRequestDto;
 import com.vitrung.vizo_dong.dto.TopupRequestDto;
+import com.vitrung.vizo_dong.entity.User;
 import com.vitrung.vizo_dong.entity.UserRole;
 import com.vitrung.vizo_dong.service.CampaignService;
 import com.vitrung.vizo_dong.service.TransactionService;
 import com.vitrung.vizo_dong.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,26 +21,27 @@ import java.security.Principal;
 @Controller
 public class AdminController {
 
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private TransactionService transactionService;
-
-    @Autowired
     private CampaignService campaignService;
+
+    public AdminController(UserService userService, TransactionService transactionService, CampaignService campaignService) {
+        this.userService = userService;
+        this.transactionService = transactionService;
+        this.campaignService = campaignService;
+    }
 
     private void buildAdminModel(Model model, String keyword, int page, int size) {
         model.addAttribute("topupRequest", new TopupRequestDto());
         model.addAttribute("usersPage", userService.searchUsers(keyword, page, size));
         model.addAttribute("allCampaigns", campaignService.getCampaignPage(0, 100).getContent());
-        model.addAttribute("roles", UserRole.values());
         model.addAttribute("keyword", keyword == null ? "" : keyword.trim());
         model.addAttribute("size", size);
         model.addAttribute("totalUsers", userService.countUsers());
         model.addAttribute("totalBalance", userService.getTotalBalance());
         model.addAttribute("totalTransactions", transactionService.countAllTransactions());
         model.addAttribute("totalTransactedAmount", transactionService.sumAllTransactedAmount());
+        model.addAttribute("campaignTotalRaised", campaignService.getTotalRaised());
         model.addAttribute("recentCampaigns", campaignService.getRecentCampaigns(8));
         model.addAttribute("recentTransactions", transactionService.getRecentTransactions(20));
     }
@@ -51,6 +53,25 @@ public class AdminController {
                                      @RequestParam(defaultValue = "10") int size) {
         buildAdminModel(model, keyword, page, size);
         return "admin/dashboard";
+    }
+
+    @GetMapping("/admin/users/{id}")
+    public String showUserDetail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            User user = userService.getUserById(id);
+            AdminUserUpdateRequestDto userUpdate = new AdminUserUpdateRequestDto();
+            userUpdate.setEmail(user.getEmail());
+            userUpdate.setRole(user.getRole());
+
+            model.addAttribute("user", user);
+            model.addAttribute("userUpdate", userUpdate);
+            model.addAttribute("topupRequest", new TopupRequestDto());
+            model.addAttribute("roles", UserRole.values());
+            return "admin/user-detail";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin";
+        }
     }
 
     // Xử lý nạp tiền từ dashboard
@@ -71,6 +92,20 @@ public class AdminController {
         return "redirect:/admin";
     }
 
+    @PostMapping("/admin/users/{id}/update")
+    public String updateUserDetail(@PathVariable Long id,
+                                   @ModelAttribute AdminUserUpdateRequestDto userUpdate,
+                                   Principal principal,
+                                   RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateUserByAdmin(id, userUpdate, principal.getName());
+            redirectAttributes.addFlashAttribute("success", "Cập nhật người dùng thành công");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/users/" + id;
+    }
+
     @PostMapping("/admin/users/{id}/role")
     public String updateUserRole(@PathVariable Long id,
                                  @RequestParam UserRole role,
@@ -82,7 +117,7 @@ public class AdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin";
+        return "redirect:/admin/users/" + id;
     }
 
     @PostMapping("/admin/users/{id}/delete")
@@ -95,7 +130,7 @@ public class AdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "redirect:/admin";
+        return "redirect:/admin/users/" + id;
     }
 
     @PostMapping("/admin/campaigns/{id}/update")
@@ -112,7 +147,6 @@ public class AdminController {
         }
         return "redirect:/admin";
     }
-
     @PostMapping("/admin/campaigns/{id}/delete")
     public String deleteCampaign(@PathVariable Long id,
                                  RedirectAttributes redirectAttributes) {
