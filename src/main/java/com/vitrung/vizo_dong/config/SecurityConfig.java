@@ -57,7 +57,7 @@ public class SecurityConfig {
         @Bean
         @Order(2)
         public SecurityFilterChain webFilterChain(HttpSecurity http) throws Exception {
-        http
+                http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(request -> request.getRequestURI().startsWith("/login")).permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/register")).permitAll()

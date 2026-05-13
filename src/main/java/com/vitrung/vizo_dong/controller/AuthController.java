@@ -4,7 +4,6 @@ import com.vitrung.vizo_dong.dto.RegisterRequestDto;
 import com.vitrung.vizo_dong.entity.User;
 import com.vitrung.vizo_dong.entity.UserRole;
 import com.vitrung.vizo_dong.service.CampaignService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +16,13 @@ import java.security.Principal;
 
 @Controller
 public class AuthController {
-    @Autowired
     private UserService userService;
     private CampaignService campaignService;
+
+    public AuthController(UserService userService, CampaignService campaignService) {
+        this.userService = userService;
+        this.campaignService = campaignService;
+    }
 
     @GetMapping("/login")
     public String showLoginPage() {
@@ -31,22 +34,19 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute RegisterRequestDto registerRequest,
-                                  RedirectAttributes redirectAttributes){
-                                        if(!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
-                                            redirectAttributes.addFlashAttribute("error", "Mat khau khong khop");
-                                            return "redirect:/register";
-                                        }
-                                        try {
-                                            userService.register(registerRequest);
-                                            redirectAttributes.addFlashAttribute("success", "Dang ky thanh cong, vui long dang nhap");
-                                            return "redirect:/login";
-                                        } catch (Exception e) {
-                                            redirectAttributes.addFlashAttribute("error", e.getMessage());
-                                            return "redirect:/register";
-                                    }
-
-
+    public String processRegister(@ModelAttribute RegisterRequestDto registerRequest,RedirectAttributes redirectAttributes){
+        if(!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
+            redirectAttributes.addFlashAttribute("error", "Mat khau khong khop");
+            return "redirect:/register";
+        }
+        try {
+            userService.register(registerRequest);
+            redirectAttributes.addFlashAttribute("success", "Dang ky thanh cong, vui long dang nhap");
+            return "redirect:/login";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/register";
+        }
     }
     @GetMapping("/home")
     public String HomePage(Model model, Principal principal) {
