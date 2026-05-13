@@ -19,8 +19,6 @@ import java.security.Principal;
 public class AuthController {
     @Autowired
     private UserService userService;
-
-    @Autowired
     private CampaignService campaignService;
 
     @GetMapping("/login")
